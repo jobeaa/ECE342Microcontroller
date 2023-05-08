@@ -1,0 +1,30 @@
+/*
+ *  Pin bindings for the board.
+ *
+ *  Created on: May 8, 2023
+ *      Author: silas
+ */
+
+#ifndef BOARD_H_
+#define BOARD_H_
+
+#define MOTOR_1_DIRECTION_PIN -1
+#define MOTOR_1_MAGNITUDE_PIN -1
+#define MOTOR_2_DIRECTION_PIN -1
+#define MOTOR_2_MAGNITUDE_PIN -1
+
+#define ENCODER_1_SIGNAL_A_PIN -1
+#define ENCODER_1_SIGNAL_B_PIN -1
+#define ENCODER_2_SIGNAL_A_PIN -1
+#define ENCODER_2_SIGNAL_B_PIN -1
+
+#define WRITING_UTENSIL_SERVO_SIGNAL_PIN -1
+
+#define LIMIT_SWITCH_LINKAGE_1_HOME_PIN -1
+#define LIMIT_SWITCH_LINKAGE_1_MAX_PIN -1
+#define LIMIT_SWITCH_LINKAGE_2_HOME_PIN -1
+#define LIMIT_SWITCH_LINKAGE_2_MAX_PIN -1
+#define LIMIT_SWITCH_WRITING_UTENSIL_HOME_PIN -1
+
+
+#endif /* BOARD_H_ */
