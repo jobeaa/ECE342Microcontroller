@@ -14,10 +14,10 @@ typedef struct {
 } limit_switch_controller_t;
 
 // Initialize controller and underlying peripherals.
-limit_switch_controller_open(limit_switch_controller_t controller);
+void limit_switch_controller_open(limit_switch_controller_t controller);
 
 // Deinitialize controller and underlying peripherals.
-limit_switch_controller_close(limit_switch_controller_t controller);
+void limit_switch_controller_close(limit_switch_controller_t controller);
 
 
 #endif /* LIMIT_SWITCH_CONTROLLER_H_ */
