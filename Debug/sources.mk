@@ -112,5 +112,5 @@ PDE_DEPS__QUOTED :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 . \
-driverlib/MSP430FR2xx_4xx \
+hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx \
 

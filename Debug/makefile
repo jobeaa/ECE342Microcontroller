@@ -9,29 +9,29 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./main.obj" \
-"./driverlib/MSP430FR2xx_4xx/adc.obj" \
-"./driverlib/MSP430FR2xx_4xx/crc.obj" \
-"./driverlib/MSP430FR2xx_4xx/cs.obj" \
-"./driverlib/MSP430FR2xx_4xx/ecomp.obj" \
-"./driverlib/MSP430FR2xx_4xx/eusci_a_spi.obj" \
-"./driverlib/MSP430FR2xx_4xx/eusci_a_uart.obj" \
-"./driverlib/MSP430FR2xx_4xx/eusci_b_i2c.obj" \
-"./driverlib/MSP430FR2xx_4xx/eusci_b_spi.obj" \
-"./driverlib/MSP430FR2xx_4xx/framctl.obj" \
-"./driverlib/MSP430FR2xx_4xx/gpio.obj" \
-"./driverlib/MSP430FR2xx_4xx/icc.obj" \
-"./driverlib/MSP430FR2xx_4xx/lcd_e.obj" \
-"./driverlib/MSP430FR2xx_4xx/mpy32.obj" \
-"./driverlib/MSP430FR2xx_4xx/pmm.obj" \
-"./driverlib/MSP430FR2xx_4xx/rtc.obj" \
-"./driverlib/MSP430FR2xx_4xx/sac.obj" \
-"./driverlib/MSP430FR2xx_4xx/sfr.obj" \
-"./driverlib/MSP430FR2xx_4xx/sysctl.obj" \
-"./driverlib/MSP430FR2xx_4xx/tia.obj" \
-"./driverlib/MSP430FR2xx_4xx/timer_a.obj" \
-"./driverlib/MSP430FR2xx_4xx/timer_b.obj" \
-"./driverlib/MSP430FR2xx_4xx/tlv.obj" \
-"./driverlib/MSP430FR2xx_4xx/wdt_a.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/adc.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/crc.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/cs.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/ecomp.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_a_spi.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_a_uart.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_b_i2c.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_b_spi.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/framctl.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/gpio.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/icc.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/lcd_e.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/mpy32.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/pmm.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/rtc.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sac.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sfr.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sysctl.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/tia.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/timer_a.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/timer_b.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/tlv.obj" \
+"./hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/wdt_a.obj" \
 "../lnk_msp430fr4133.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
@@ -44,9 +44,9 @@ RMDIR := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
--include driverlib/MSP430FR2xx_4xx/subdir_vars.mk
+-include hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/subdir_vars.mk
 -include subdir_rules.mk
--include driverlib/MSP430FR2xx_4xx/subdir_rules.mk
+-include hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -164,8 +164,10 @@ ECE342Microcontroller.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "driverlib/MSP430FR2xx_4xx/adc.obj" "driverlib/MSP430FR2xx_4xx/crc.obj" "driverlib/MSP430FR2xx_4xx/cs.obj" "driverlib/MSP430FR2xx_4xx/ecomp.obj" "driverlib/MSP430FR2xx_4xx/eusci_a_spi.obj" "driverlib/MSP430FR2xx_4xx/eusci_a_uart.obj" "driverlib/MSP430FR2xx_4xx/eusci_b_i2c.obj" "driverlib/MSP430FR2xx_4xx/eusci_b_spi.obj" "driverlib/MSP430FR2xx_4xx/framctl.obj" "driverlib/MSP430FR2xx_4xx/gpio.obj" "driverlib/MSP430FR2xx_4xx/icc.obj" "driverlib/MSP430FR2xx_4xx/lcd_e.obj" "driverlib/MSP430FR2xx_4xx/mpy32.obj" "driverlib/MSP430FR2xx_4xx/pmm.obj" "driverlib/MSP430FR2xx_4xx/rtc.obj" "driverlib/MSP430FR2xx_4xx/sac.obj" "driverlib/MSP430FR2xx_4xx/sfr.obj" "driverlib/MSP430FR2xx_4xx/sysctl.obj" "driverlib/MSP430FR2xx_4xx/tia.obj" "driverlib/MSP430FR2xx_4xx/timer_a.obj" "driverlib/MSP430FR2xx_4xx/timer_b.obj" "driverlib/MSP430FR2xx_4xx/tlv.obj" "driverlib/MSP430FR2xx_4xx/wdt_a.obj" 
-	-$(RM) "main.d" "driverlib/MSP430FR2xx_4xx/adc.d" "driverlib/MSP430FR2xx_4xx/crc.d" "driverlib/MSP430FR2xx_4xx/cs.d" "driverlib/MSP430FR2xx_4xx/ecomp.d" "driverlib/MSP430FR2xx_4xx/eusci_a_spi.d" "driverlib/MSP430FR2xx_4xx/eusci_a_uart.d" "driverlib/MSP430FR2xx_4xx/eusci_b_i2c.d" "driverlib/MSP430FR2xx_4xx/eusci_b_spi.d" "driverlib/MSP430FR2xx_4xx/framctl.d" "driverlib/MSP430FR2xx_4xx/gpio.d" "driverlib/MSP430FR2xx_4xx/icc.d" "driverlib/MSP430FR2xx_4xx/lcd_e.d" "driverlib/MSP430FR2xx_4xx/mpy32.d" "driverlib/MSP430FR2xx_4xx/pmm.d" "driverlib/MSP430FR2xx_4xx/rtc.d" "driverlib/MSP430FR2xx_4xx/sac.d" "driverlib/MSP430FR2xx_4xx/sfr.d" "driverlib/MSP430FR2xx_4xx/sysctl.d" "driverlib/MSP430FR2xx_4xx/tia.d" "driverlib/MSP430FR2xx_4xx/timer_a.d" "driverlib/MSP430FR2xx_4xx/timer_b.d" "driverlib/MSP430FR2xx_4xx/tlv.d" "driverlib/MSP430FR2xx_4xx/wdt_a.d" 
+	-$(RM) "main.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/adc.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/crc.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/cs.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/ecomp.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_a_spi.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_a_uart.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_b_i2c.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_b_spi.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/framctl.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/gpio.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/icc.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/lcd_e.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/mpy32.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/pmm.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/rtc.obj" 
+	-$(RM) "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sac.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sfr.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sysctl.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/tia.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/timer_a.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/timer_b.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/tlv.obj" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/wdt_a.obj" 
+	-$(RM) "main.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/adc.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/crc.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/cs.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/ecomp.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_a_spi.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_a_uart.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_b_i2c.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/eusci_b_spi.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/framctl.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/gpio.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/icc.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/lcd_e.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/mpy32.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/pmm.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/rtc.d" 
+	-$(RM) "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sac.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sfr.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/sysctl.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/tia.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/timer_a.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/timer_b.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/tlv.d" "hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/wdt_a.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
