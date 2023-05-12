@@ -6,9 +6,6 @@
 
 encoder_driver_t encoder1;
 
-clock_driver_time_t times[20];
-uint8_t times_index = 0;
-
 int main(void)
 {
     //Stop Watchdog Timer
@@ -41,16 +38,12 @@ int main(void)
 
     // Limit Switch Controllers
 
-
     // See comment in declaration. Used in all examples.
     PMM_unlockLPM5();
 
     // Global enable interrupts
     __enable_interrupt();
 
-
-    // DEBUGGING RTC
-    GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN3);
     while(1){
     }
 }
@@ -69,12 +62,5 @@ void P1_ISR (void)
     //LED1 = toggle
     GPIO_toggleOutputOnPin(ONBOARD_LED1_GPIO_PORT, ONBOARD_LED1_GPIO_PIN);
 
-    clock_driver_atomic_get_rtc_time(&times[times_index]);
-    if(times_index == 19) {
-        times_index = 0;
-    }
-    else
-        times_index++;
-
-    //encoder_driver_signal_a_rising_edge_event(&encoder1);
+    encoder_driver_signal_a_rising_edge_event(&encoder1);
 }

@@ -39,19 +39,12 @@ void clock_driver_open(void) {
     smclk_freq_khz = CS_getSMCLK() / 1000;
 }
 
-void clock_driver_atomic_get_rtc_time(clock_driver_time_t* time) {
+inline void clock_driver_get_rtc_time(clock_driver_time_t* time) {
     // prevent rtc_overflow_count from incrementing while reading time
     do {
         time->time_ms = rtc_overflow_count;
         time->time_us = RTCCNT;
     } while(time->time_ms != rtc_overflow_count);
-    // NOTE this causes RTC to accumulate an error of <6 clock cycles
-    // (time it takes to copy rtc_overflow_count) (<0.3us) (<10/65535
-    // or <0.015%) every time this function is called.
-    //__disable_interrupt();
-    //time->time_us = RTCCNT;
-    //time->time_ms = rtc_overflow_count;
-    //__enable_interrupt();
 
     time->time_ms = ((RTC_MODULUS)/smclk_freq_khz) * time->time_ms;
     time->time_ms += time->time_us / 1000;

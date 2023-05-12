@@ -25,8 +25,6 @@ void clock_driver_open(void);
 
 // gets the current rtc time. does not take into account the
 // execution from when the data is read to when it is returned.
-// Maximum estimated error is
-// atomic function disables interrupts while executing.
-void clock_driver_atomic_get_rtc_time(clock_driver_time_t* time);
+inline void clock_driver_get_rtc_time(clock_driver_time_t* time);
 
 #endif /* CLOCK_DRIVER_H_ */
