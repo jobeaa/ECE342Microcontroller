@@ -13,6 +13,10 @@ void ring_buffer_init(ring_buffer_t *buffer, uint8_t *buf, size_t buf_size) {
   buffer->head_index = 0;
 }
 
+inline size_t ring_buffer_get_allocated_size(ring_buffer_t *buffer) {
+    return buffer->buffer_mask + 1;     // this should 'undo' manipulations to buf_size in init(...)
+}
+
 void ring_buffer_queue(ring_buffer_t *buffer, uint8_t data) {
   /* Is buffer full? */
   if(ring_buffer_is_full(buffer)) {

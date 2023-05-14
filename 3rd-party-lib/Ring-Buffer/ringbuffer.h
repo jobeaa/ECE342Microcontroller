@@ -69,6 +69,12 @@ struct ring_buffer_t {
 void ring_buffer_init(ring_buffer_t *buffer, uint8_t *buf, size_t buf_size);
 
 /**
+ * Returns the size of the underlying memory
+ * @param buffer The ring buffer to get size from
+ */
+inline size_t ring_buffer_get_allocated_size(ring_buffer_t *buffer);
+
+/**
  * Adds a byte to a ring buffer.
  * @param buffer The buffer in which the data should be placed.
  * @param data The byte to place.
@@ -103,7 +109,7 @@ ring_buffer_size_t ring_buffer_dequeue_arr(ring_buffer_t *buffer, uint8_t *data,
  * Peeks a ring buffer, i.e. returns an element without removing it.
  * @param buffer The buffer from which the data should be returned.
  * @param data A pointer to the location at which the data should be placed.
- * @param index The index to peek.
+ * @param index The index to peek relative to tail.
  * @return 1 if data was returned; 0 otherwise.
  */
 uint8_t ring_buffer_peek(ring_buffer_t *buffer, uint8_t *data, ring_buffer_size_t index);
