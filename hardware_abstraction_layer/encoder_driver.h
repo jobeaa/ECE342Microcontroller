@@ -8,6 +8,7 @@
 #define ENCODER_DRIVER_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "ringbuffer.h"
 
 typedef struct {
@@ -15,7 +16,11 @@ typedef struct {
     uint16_t signal_a_gpio_pin;
     uint16_t signal_b_gpio_port;
     uint16_t signal_b_gpio_pin;
-    ring_buffer_t* data_buffer;     // no touchy!
+    ring_buffer_t* data_buffer;
+    bool has_processed_a_reading;
+    int16_t pulse_count;
+    float instantaneous_velocity_pulse_per_usec;
+
 } encoder_driver_t;
 
 // Initialize driver and underlying peripherals.
@@ -28,6 +33,10 @@ void encoder_driver_open(encoder_driver_t* driver);
 
 // Deinitialize driver and underlying peripherals.
 void encoder_driver_close(encoder_driver_t* driver);
+
+void encoder_driver_calculate_kinematics(encoder_driver_t* driver);
+
+inline float encoder_driver_get_position_degrees(encoder_driver_t* driver);
 
 // IMPORTANT: The user (YOU) must register this function within the correct ISR.
 //            Call this function in signal_a's GPIO interrupt.

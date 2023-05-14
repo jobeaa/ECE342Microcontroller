@@ -27,7 +27,7 @@ int main(void)
     encoder1.signal_b_gpio_port = ENCODER_1_SIGNAL_B_GPIO_PORT;
     encoder1.signal_b_gpio_pin = ENCODER_1_SIGNAL_B_GPIO_PIN;
     ring_buffer_t encoder1_ring_buffer;
-    char encoder1_ring_buffer_memory[128];
+    uint8_t encoder1_ring_buffer_memory[64];
     ring_buffer_init(&encoder1_ring_buffer,
                      encoder1_ring_buffer_memory,
                      sizeof(encoder1_ring_buffer_memory));
@@ -41,10 +41,20 @@ int main(void)
     // See comment in declaration. Used in all examples.
     PMM_unlockLPM5();
 
+    // Test with single pulse:
+    GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN6);
+    GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN6);
+
     // Global enable interrupts
+    //GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
     __enable_interrupt();
 
+    //GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN6);
+
+
     while(1){
+        encoder_driver_calculate_kinematics(&encoder1);
+        encoder_driver_signal_a_rising_edge_event(&encoder1);
     }
 }
 
