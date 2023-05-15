@@ -46,15 +46,10 @@ int main(void)
     GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN6);
 
     // Global enable interrupts
-    //GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
     __enable_interrupt();
-
-    //GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN6);
-
 
     while(1){
         encoder_driver_calculate_kinematics(&encoder1);
-        encoder_driver_signal_a_rising_edge_event(&encoder1);
     }
 }
 

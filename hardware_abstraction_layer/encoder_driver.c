@@ -22,9 +22,9 @@ void encoder_driver_open(encoder_driver_t* driver){
     GPIO_setAsInputPinWithPullDownResistor(driver->signal_a_gpio_port, driver->signal_a_gpio_pin);
     GPIO_setAsInputPinWithPullDownResistor(driver->signal_b_gpio_port, driver->signal_b_gpio_pin);
 
-    //GPIO_enableInterrupt(driver->signal_a_gpio_port, driver->signal_a_gpio_pin);
-    //GPIO_selectInterruptEdge(driver->signal_a_gpio_port, driver->signal_a_gpio_pin, GPIO_LOW_TO_HIGH_TRANSITION);
-    //GPIO_clearInterrupt(driver->signal_a_gpio_port, driver->signal_a_gpio_pin);
+    GPIO_enableInterrupt(driver->signal_a_gpio_port, driver->signal_a_gpio_pin);
+    GPIO_selectInterruptEdge(driver->signal_a_gpio_port, driver->signal_a_gpio_pin, GPIO_LOW_TO_HIGH_TRANSITION);
+    GPIO_clearInterrupt(driver->signal_a_gpio_port, driver->signal_a_gpio_pin);
 
     driver->pulse_count = 0;
     driver->instantaneous_velocity_pulse_per_usec = 0;
@@ -67,11 +67,9 @@ void encoder_driver_calculate_kinematics(encoder_driver_t* driver) {
         const uint16_t last_index = readings_length - 1;
         const uint16_t second_last_index = last_index - 1;
         // (y2-y1)/(x2-x1)
-        driver->instantaneous_velocity_pulse_per_usec = (driver->pulse_count - second_last_reading_pulse_count) /
-                (
-                        1000 * (readings[last_index].time.time_ms - readings[second_last_index].time.time_ms) +
-                        readings[last_index].time.time_us - readings[second_last_index].time.time_us
-                );
+        float delta_t_us = ((1000 * (readings[last_index].time.time_ms - readings[second_last_index].time.time_ms)) +
+                readings[last_index].time.time_us - readings[second_last_index].time.time_us);
+        driver->instantaneous_velocity_pulse_per_usec = (driver->pulse_count - second_last_reading_pulse_count) / delta_t_us;
     }
 
     driver->has_processed_a_reading = true;
