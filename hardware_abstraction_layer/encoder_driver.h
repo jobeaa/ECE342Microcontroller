@@ -19,7 +19,7 @@ typedef struct {
     ring_buffer_t* data_buffer;
     bool has_processed_a_reading;
     int16_t pulse_count;
-    float instantaneous_velocity_pulse_per_usec;
+    float instantaneous_velocity_pulse_per_ms;
 
 } encoder_driver_t;
 

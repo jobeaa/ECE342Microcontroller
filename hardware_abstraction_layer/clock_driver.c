@@ -17,8 +17,9 @@
 #define RTC_MODULUS                 0xFFFF      // set the modulus as large as possible
                                                 // to minimize RTC interrupts.
 
-static uint32_t rtc_overflow_count = 0;
-static uint32_t smclk_freq_khz = 0;
+static volatile uint32_t rtc_overflow_count = 0;
+static uint16_t smclk_freq_khz = 0;
+static uint32_t overflow_period_us = 0;
 
 void clock_driver_open(void) {
     // call this function so that we can use CS get_<NAME>CLK APIs
@@ -32,23 +33,34 @@ void clock_driver_open(void) {
     }
     // Real Time Clock (RTC) Configuration
     RTC_init(RTC_BASE, RTC_MODULUS, RTC_CLOCKPREDIVIDER_1);
-    RTC_clearInterrupt(RTC_BASE, RTC_OVERFLOW_INTERRUPT);
+    RTC_clearInterrupt(RTC_BASE, RTC_OVERFLOW_INTERRUPT_FLAG);
     RTC_enableInterrupt(RTC_BASE, RTC_OVERFLOW_INTERRUPT);
     RTC_start(RTC_BASE, RTC_CLOCKSOURCE_SMCLK);
 
     smclk_freq_khz = CS_getSMCLK() / 1000;
+    overflow_period_us = (((float) (RTC_MODULUS)) / ((float) smclk_freq_khz)) * 1000;
 }
 
 inline void clock_driver_get_rtc_time(clock_driver_time_t* time) {
-    // prevent rtc_overflow_count from incrementing while reading time
-    do {
-        time->time_ms = rtc_overflow_count;
-        time->time_us = RTCCNT;
-    } while(time->time_ms != rtc_overflow_count);
+    uint32_t current_rtc_overflow_count = rtc_overflow_count;
+    uint32_t current_rtc_count = RTCCNT;
 
-    time->time_ms = ((RTC_MODULUS)/smclk_freq_khz) * time->time_ms;
-    time->time_ms += time->time_us / 1000;
-    time->time_us = time->time_us % 1000;
+    // If rtc overflow ISR occured between now and when the overflow counter was read
+    if(rtc_overflow_count > current_rtc_overflow_count) {
+        // check if the overflow counter should be decremented.
+        if(current_rtc_count < (0.5 * RTC_MODULUS)) {
+            current_rtc_overflow_count--;
+        }
+    }
+
+    // add overflowed-counter time [ms]
+    time->time_ms = (current_rtc_overflow_count * overflow_period_us) / 1000;
+    // add unoverflowed-counter time [ms]
+    time->time_ms += (current_rtc_count / smclk_freq_khz);
+
+    // get unoverflowed-counter time [us], but reduce it to less than 1000, because we've already
+    // counted such values in time_ms.
+    time->time_us = ((current_rtc_count * 1000) / smclk_freq_khz) % 1000;
 }
 
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)

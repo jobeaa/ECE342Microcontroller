@@ -64,8 +64,5 @@ void P1_ISR (void)
     //S1 IFG cleared
     GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
 
-    //LED1 = toggle
-    GPIO_toggleOutputOnPin(ONBOARD_LED1_GPIO_PORT, ONBOARD_LED1_GPIO_PIN);
-
     encoder_driver_signal_a_rising_edge_event(&encoder1);
 }
