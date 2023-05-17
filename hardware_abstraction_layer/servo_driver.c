@@ -8,9 +8,21 @@
 #include "servo_driver.h"
 
 void servo_driver_open(servo_driver_t* driver) {
-
+    motor_direct_driver_open(&(driver->motor_controller));
 }
 
-inline void void servo_driver_move_to(servo_driver_t* driver, uint16_t position_degrees) {
+inline void servo_driver_move_to(servo_driver_t* driver, uint16_t position_degrees) {
+    if(position_degrees > POSITION_MAX_DEGREES) {
+        position_degrees = POSITION_MAX_DEGREES;
+    }
+
+    // scale position_degress to match underlying motor_controller's resolution
+    uint16_t position_power =  position_degrees * PWM_COMPARATOR_MAX;
+    position_degrees /= POSITION_MAX_DEGREES;
+
+    motor_direct_driver_set_output(
+            &(driver->motor_controller),
+            position_power
+            );
 
 }

@@ -4,6 +4,7 @@
 #include "encoder_driver.h"
 #include "clock_driver.h"
 #include "motor_direct_driver.h"
+#include "servo_driver.h"
 
 encoder_driver_t encoder1;
 motor_direct_driver_t motor1;
@@ -47,6 +48,31 @@ int main(void)
     motor_direct_driver_open(&motor1);
 
     // Servo Controller
+    servo_driver_t writing_utensil_servo;
+    writing_utensil_servo.motor_controller.motor_magnitude_gpio_port =
+            WRITING_UTENSIL_SERVO_SIGNAL_GPIO_PORT;
+    writing_utensil_servo.motor_controller.motor_magnitude_gpio_pin =
+            WRITING_UTENSIL_SERVO_SIGNAL_GPIO_PIN;
+    writing_utensil_servo.motor_controller.timer_aX_base_address =
+            WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_BASE_ADDRESS;
+    writing_utensil_servo.motor_controller.timer_aX_channel_compare_register =
+            WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_CAPCOMP_REG;
+    writing_utensil_servo.motor_controller.motor_magnitude_gpio_timer_ax_channel_module_function =
+            WRITING_UTENSIL_SERVO_SIGNAL_GPIO_TIMER_AX_CHANNEL_MODULE_FUNCTION;
+    // GROSS: use LCD-tied pin which won't be used.
+    writing_utensil_servo.motor_controller.motor_direction_gpio_port =
+            GPIO_PORT_P7;
+    writing_utensil_servo.motor_controller.motor_direction_gpio_pin =
+            GPIO_PORT_P1;
+    servo_driver_open(&writing_utensil_servo);
+
+
+
+
+    servo_driver_move_to(&writing_utensil_servo, 150);
+
+
+
 
     // Limit Switch Controllers
 
