@@ -3,6 +3,7 @@
 #include "board.h"
 #include "encoder_driver.h"
 #include "clock_driver.h"
+#include "motor_direct_driver.h"
 
 encoder_driver_t encoder1;
 
@@ -33,6 +34,17 @@ int main(void)
                      sizeof(encoder1_ring_buffer_memory));
     encoder1.data_buffer = &encoder1_ring_buffer;
     encoder_driver_open(&encoder1);
+
+
+    motor_direct_driver_t motor1;
+    motor1.motor_preamp_signal_gpio_port = GPIO_PORT_P1;
+    motor1.motor_preamp_signal_gpio_pin = GPIO_PIN7;
+    motor1.motor_preamp_signal_gpio_timer_a0_channel = 1;
+    motor1.motor_preamp_signal_gpio_timer_a0_channel_module_function = GPIO_PRIMARY_MODULE_FUNCTION;
+    motor_direct_driver_open(&motor1);
+
+
+
 
     // Servo Controller
 
