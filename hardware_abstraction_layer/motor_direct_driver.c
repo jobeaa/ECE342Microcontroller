@@ -11,74 +11,105 @@
 
 #include <stdbool.h>
 
-static const uint16_t timer_a_instance_base = (TIMER_A0_BASE);
-
-static bool was_timer_a_configured = false;
-
-static void configure_timer_a() {
-    if(!was_timer_a_configured) {
-        Timer_A_initContinuousModeParam param;
-        param.clockSource = TIMER_A_CLOCKSOURCE_SMCLK;
-        param.clockSourceDivider = TIMER_A_CLOCKSOURCE_DIVIDER_1;
-        param.timerInterruptEnable_TAIE = TIMER_A_TAIE_INTERRUPT_DISABLE;
-        param.timerClear = TIMER_A_SKIP_CLEAR;
-        param.startTimer = true;
-        Timer_A_initContinuousMode(timer_a_instance_base, &param);
+static void configure_timer_a(uint16_t timer_aX_base_address) {
+    static uint16_t timer_aX_configured_base_addresses[8] = {0};
+    int16_t first_empty_index = -1;
+    uint16_t i;
+    for(i = 0; i < 8; i++) {
+        if(timer_aX_configured_base_addresses[i] == timer_aX_base_address) {
+           return;
+        }
+        if((first_empty_index != -1) && (!timer_aX_configured_base_addresses[i])) {
+            first_empty_index = i;
+        }
     }
+
+    Timer_A_initUpModeParam param;
+    param.clockSource = TIMER_A_CLOCKSOURCE_SMCLK;
+    param.clockSourceDivider = TIMER_A_CLOCKSOURCE_DIVIDER_1;
+    param.timerPeriod = PWM_COMPARATOR_MAX;
+    param.timerInterruptEnable_TAIE = TIMER_A_TAIE_INTERRUPT_DISABLE;
+    param.captureCompareInterruptEnable_CCR0_CCIE = TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE;
+    param.timerClear = TIMER_A_SKIP_CLEAR;
+    param.startTimer = true;
+    Timer_A_initUpMode(timer_aX_base_address, &param);
+
+    timer_aX_configured_base_addresses[first_empty_index] = timer_aX_base_address;
 }
 
 void motor_direct_driver_open(motor_direct_driver_t* driver) {
     // Ensure TimerA is configured
-    configure_timer_a();
+    configure_timer_a(driver->timer_aX_base_address);
 
     // Configure GPIO Pins
     GPIO_setAsPeripheralModuleFunctionOutputPin(
-            driver->motor_preamp_signal_gpio_port,
-            driver->motor_preamp_signal_gpio_pin,
-            driver->motor_preamp_signal_gpio_timer_a0_channel_module_function
+            driver->motor_magnitude_gpio_port,
+            driver->motor_magnitude_gpio_pin,
+            driver->motor_magnitude_gpio_timer_ax_channel_module_function
             );
     GPIO_setAsOutputPin(
             driver->motor_direction_gpio_port,
             driver->motor_direction_gpio_pin
             );
 
-    uint16_t compare_register;
-    switch(driver->motor_preamp_signal_gpio_timer_a0_channel) {
-        case 0:
-            compare_register = TIMER_A_CAPTURECOMPARE_REGISTER_0;
-            break;
-        case 1:
-            compare_register = TIMER_A_CAPTURECOMPARE_REGISTER_1;
-            break;
-        case 2:
-            compare_register = TIMER_A_CAPTURECOMPARE_REGISTER_2;
-            break;
-        default:
-            break;
-    }
-
-    // Configure PWM for preamp
+    // Configure PWM for magnitude
     Timer_A_initCompareModeParam compare_mode_param;
-    compare_mode_param.compareRegister = compare_register;
+    compare_mode_param.compareRegister = driver->timer_aX_channel_compare_register;
     compare_mode_param.compareInterruptEnable = TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE;
     compare_mode_param.compareOutputMode = TIMER_A_OUTPUTMODE_RESET_SET;
-    compare_mode_param.compareValue = (0xffff/3);
+    compare_mode_param.compareValue = 0;
     Timer_A_initCompareMode(
-            timer_a_instance_base,
+            driver->timer_aX_base_address,
             &compare_mode_param
-            );
-
-    Timer_A_setCompareValue(
-            timer_a_instance_base,
-            compare_register,
-            (0xffff/2)
             );
 }
 
-inline void motor_direct_driver_set_output(float power) {
-    // set preamp to 0
+inline void motor_direct_driver_set_output(motor_direct_driver_t* driver, int16_t power) {
+    bool is_power_positive = (power > 0);
+    uint16_t magnitude = abs(power);
 
-    // update direction gpio state based on sign of `power`.
+    // set magnitude to 0
+    // change output mode to reset so that pin is low while changing duty cycle
+    GPIO_setAsOutputPin(
+            driver->motor_magnitude_gpio_port,
+            driver->motor_magnitude_gpio_pin
+           );
+    GPIO_setOutputLowOnPin(
+            driver->motor_magnitude_gpio_port,
+            driver->motor_magnitude_gpio_pin
+           );
+    // NOTE: user's guide states pwm should be zeroed before writing new value.
+    //       driverlib implementation does not zero.
+    Timer_A_setCompareValue(
+            driver->timer_aX_base_address,
+            driver->timer_aX_channel_compare_register,
+            0
+            );
 
-    // turn on preamp proportional to power
+    // update direction gpio state based on sign of `power`
+    if(is_power_positive) {
+        GPIO_setOutputHighOnPin(
+                driver->motor_direction_gpio_port,
+                driver->motor_direction_gpio_pin
+                );
+    }
+    else {
+        GPIO_setOutputLowOnPin(
+                driver->motor_direction_gpio_port,
+                driver->motor_direction_gpio_pin
+                );
+    }
+
+    // set magnitude proportional to power
+    Timer_A_setCompareValue(
+            driver->timer_aX_base_address,
+            driver->timer_aX_channel_compare_register,
+            magnitude
+            );
+    // restore output mode
+    GPIO_setAsPeripheralModuleFunctionOutputPin(
+            driver->motor_magnitude_gpio_port,
+            driver->motor_magnitude_gpio_pin,
+            driver->motor_magnitude_gpio_timer_ax_channel_module_function
+           );
 }
