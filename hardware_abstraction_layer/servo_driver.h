@@ -10,6 +10,8 @@
 
 #include "motor_direct_driver.h"
 
+#include <stdbool.h>
+
 #define POSITION_MAX_DEGREES 200
 
 typedef struct {
@@ -23,6 +25,6 @@ void servo_driver_open(servo_driver_t* driver);
 // will try to go to and hold this position producing the necessary torques
 // to do so.
 // Position_degrees <= POSITION_MAX_DEGREES; higher values will be truncated to this upper bound.
-void servo_driver_move_to(servo_driver_t* driver, uint16_t position_degrees);
+void servo_driver_move_to(servo_driver_t* driver, bool position_degrees);
 
 #endif /* SERVO_DRIVER_H_ */

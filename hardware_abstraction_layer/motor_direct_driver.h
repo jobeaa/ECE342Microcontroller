@@ -15,7 +15,7 @@
 // the frequency. High frequency is desirable because a moving motor's
 // kinetic energy will smooth the signal, but lower frequencies may produce
 // notable motor oscillations.
-#define PWM_COMPARATOR_MAX (UINT16_MAX / 64);    // "emulated dac" resolution
+#define PWM_COMPARATOR_MAX (UINT16_MAX)    // "emulated dac" resolution
 
 typedef struct {
     uint16_t motor_magnitude_gpio_port;

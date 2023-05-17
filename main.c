@@ -67,8 +67,6 @@ int main(void)
     servo_driver_open(&writing_utensil_servo);
 
 
-
-
     servo_driver_move_to(&writing_utensil_servo, 150);
 
 
