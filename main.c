@@ -3,8 +3,10 @@
 #include "board.h"
 #include "encoder_driver.h"
 #include "clock_driver.h"
+#include "motor_direct_driver.h"
 
 encoder_driver_t encoder1;
+motor_direct_driver_t motor1;
 
 int main(void)
 {
@@ -34,16 +36,22 @@ int main(void)
     encoder1.data_buffer = &encoder1_ring_buffer;
     encoder_driver_open(&encoder1);
 
+    motor1.motor_magnitude_gpio_port = MOTOR_1_MAGNITUDE_GPIO_PORT;
+    motor1.motor_magnitude_gpio_pin = MOTOR_1_MAGNITUDE_GPIO_PIN;
+    motor1.timer_aX_base_address = MOTOR_1_MAGNITUDE_TIMER_AX_BASE_ADDRESS;
+    motor1.timer_aX_channel_compare_register = MOTOR_1_MAGNITUDE_TIMER_AX_CHANNEL;
+    motor1.motor_magnitude_gpio_timer_ax_channel_module_function =
+            MOTOR_1_MAGNITUDE_GPIO_TIMER_AX_CHANNEL_MODULE_FUNCTION;
+    motor1.motor_direction_gpio_port = MOTOR_1_DIRECTION_GPIO_PORT;
+    motor1.motor_direction_gpio_pin = MOTOR_1_DIRECTION_GPIO_PIN;
+    motor_direct_driver_open(&motor1);
+
     // Servo Controller
 
     // Limit Switch Controllers
 
     // See comment in declaration. Used in all examples.
     PMM_unlockLPM5();
-
-    // Test with single pulse:
-    GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN6);
-    GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN6);
 
     // Global enable interrupts
     __enable_interrupt();
