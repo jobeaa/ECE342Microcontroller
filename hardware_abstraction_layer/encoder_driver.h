@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include "ringbuffer.h"
 
+#define DATA_BUFFER_SIZE_MIN 32
+
 typedef struct {
     uint16_t signal_a_gpio_port;
     uint16_t signal_a_gpio_pin;
@@ -23,13 +25,13 @@ typedef struct {
 
 } encoder_driver_t;
 
-// Initialize driver and underlying peripherals.
+// Initialize driver and underlying peripherals. Returns true on success, false on failure.
 // EXPECTATIONS:
 //  - passed driver is populated:
 //      - GPIO pins and ports are set
 //      - data buffer is initialized
 //  - RTC is enabled
-void encoder_driver_open(encoder_driver_t* driver);
+bool encoder_driver_open(encoder_driver_t* driver);
 
 // Deinitialize driver and underlying peripherals.
 void encoder_driver_close(encoder_driver_t* driver);
