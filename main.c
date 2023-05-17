@@ -56,7 +56,6 @@ int main(void)
     // Global enable interrupts
     __enable_interrupt();
 
-    motor_direct_driver_set_output(&motor1, 900);
     while(1){
         encoder_driver_calculate_kinematics(&encoder1);
     }
@@ -74,6 +73,4 @@ void P1_ISR (void)
     GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
 
     encoder_driver_signal_a_rising_edge_event(&encoder1);
-
-    motor_direct_driver_set_output(&motor1, -500);
 }
