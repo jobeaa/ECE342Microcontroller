@@ -4,13 +4,14 @@
 #include "encoder_driver.h"
 #include "clock_driver.h"
 #include "motor_direct_driver.h"
+#include "servo_driver.h"
 
 encoder_driver_t encoder1;
 motor_direct_driver_t motor1;
 
 int main(void)
 {
-    //Stop Watchdog Timer
+    // Stop Watchdog Timer
     WDT_A_hold(WDT_A_BASE);
 
     // On-board LEDs
@@ -20,7 +21,6 @@ int main(void)
     GPIO_setOutputLowOnPin(ONBOARD_LED2_GPIO_PORT, ONBOARD_LED2_GPIO_PIN);
 
     // Clock Configuration
-    // ---
     clock_driver_open();
 
     // Motor Controllers
@@ -47,6 +47,23 @@ int main(void)
     motor_direct_driver_open(&motor1);
 
     // Servo Controller
+    servo_driver_t writing_utensil_servo;
+    writing_utensil_servo.pwm_driver.gpio_port =
+            WRITING_UTENSIL_SERVO_SIGNAL_GPIO_PORT;
+    writing_utensil_servo.pwm_driver.gpio_pin =
+            WRITING_UTENSIL_SERVO_SIGNAL_GPIO_PIN;
+    writing_utensil_servo.pwm_driver.gpio_timer_aX_channel_module_function =
+            WRITING_UTENSIL_SERVO_SIGNAL_GPIO_TIMER_AX_CHANNEL_MODULE_FUNCTION;
+    writing_utensil_servo.pwm_driver.timer_aX_base_address =
+            WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_BASE_ADDRESS;
+    writing_utensil_servo.pwm_driver.timer_aX_channel_compare_register =
+            WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_CAPCOMP_REG;
+    writing_utensil_servo.pwm_driver.timer_aX_clock_source =
+            TIMER_A_CLOCKSOURCE_ACLK;
+    writing_utensil_servo.pwm_driver.timer_aX_clock_source_divider =
+            TIMER_A_CLOCKSOURCE_DIVIDER_1;
+    writing_utensil_servo.pwm_driver.timer_aX_period = 400;
+    servo_driver_open(&writing_utensil_servo);
 
     // Limit Switch Controllers
 
@@ -55,6 +72,10 @@ int main(void)
 
     // Global enable interrupts
     __enable_interrupt();
+
+
+    // DEBUG: test servo movement
+    servo_driver_move_to(&writing_utensil_servo, 0);
 
     while(1){
         encoder_driver_calculate_kinematics(&encoder1);
@@ -72,5 +93,5 @@ void P1_ISR (void)
     //S1 IFG cleared
     GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
 
-    encoder_driver_signal_a_rising_edge_event(&encoder1);
+    //encoder_driver_signal_a_rising_edge_event(&encoder1);
 }
