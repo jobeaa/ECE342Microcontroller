@@ -57,6 +57,7 @@ int main(void)
             WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_BASE_ADDRESS;
     writing_utensil_servo.motor_controller.timer_aX_channel_compare_register =
             WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_CAPCOMP_REG;
+
     writing_utensil_servo.motor_controller.motor_magnitude_gpio_timer_ax_channel_module_function =
             WRITING_UTENSIL_SERVO_SIGNAL_GPIO_TIMER_AX_CHANNEL_MODULE_FUNCTION;
     // GROSS: use LCD-tied pin which won't be used.
@@ -67,7 +68,7 @@ int main(void)
     servo_driver_open(&writing_utensil_servo);
 
 
-    servo_driver_move_to(&writing_utensil_servo, 150);
+    servo_driver_move_to(&writing_utensil_servo, 180);
 
 
 
@@ -96,5 +97,5 @@ void P1_ISR (void)
     //S1 IFG cleared
     GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
 
-    encoder_driver_signal_a_rising_edge_event(&encoder1);
+    //encoder_driver_signal_a_rising_edge_event(&encoder1);
 }

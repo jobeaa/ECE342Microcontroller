@@ -12,7 +12,8 @@
 
 #include <stdbool.h>
 
-#define POSITION_MAX_DEGREES 200
+// positive rotation is counter-clock-wise
+#define POSITION_MAX_DEGREES 180
 
 typedef struct {
     motor_direct_driver_t motor_controller;
@@ -21,10 +22,10 @@ typedef struct {
 // Initialize driver and underlying peripherals.
 void servo_driver_open(servo_driver_t* driver);
 
-// Adjusts PWM servo control signal to match passed position; the servo
-// will try to go to and hold this position producing the necessary torques
-// to do so.
-// Position_degrees <= POSITION_MAX_DEGREES; higher values will be truncated to this upper bound.
-void servo_driver_move_to(servo_driver_t* driver, bool position_degrees);
+// Instructs the servo to move to and hold the passed position.
+// Parameters:
+//      position_degrees:   position to move to in degrees. values greater than POSIITON_MAX_DEGREES
+//                          will be 'truncated' to this upper bound.
+void servo_driver_move_to(servo_driver_t* driver, uint16_t position_degrees);
 
 #endif /* SERVO_DRIVER_H_ */

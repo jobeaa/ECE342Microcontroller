@@ -27,7 +27,7 @@ static void configure_timer_a(uint16_t timer_aX_base_address) {
     Timer_A_initUpModeParam param;
     param.clockSource = TIMER_A_CLOCKSOURCE_ACLK;
     param.clockSourceDivider = TIMER_A_CLOCKSOURCE_DIVIDER_1;
-    param.timerPeriod = PWM_COMPARATOR_MAX;
+    param.timerPeriod = 400;
     param.timerInterruptEnable_TAIE = TIMER_A_TAIE_INTERRUPT_DISABLE;
     param.captureCompareInterruptEnable_CCR0_CCIE = TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE;
     param.timerClear = TIMER_A_SKIP_CLEAR;

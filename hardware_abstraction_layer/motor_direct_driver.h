@@ -23,9 +23,9 @@ typedef struct {
     uint16_t timer_aX_base_address;                                   // eg TIMER_A0_BASE
     uint16_t timer_aX_channel_compare_register;                       // eg TIMER_A_CAPTURECOMPARE_REGISTER_1
     uint16_t motor_magnitude_gpio_timer_ax_channel_module_function;   // eg GPIO_PRIMARY_MODULE_FUNCTION
+    uint16_t timer_aX_period;
     uint16_t motor_direction_gpio_port;
     uint16_t motor_direction_gpio_pin;
-
 } motor_direct_driver_t;
 
 // Initialize driver and underlying peripherals.
