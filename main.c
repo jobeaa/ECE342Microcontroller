@@ -11,7 +11,7 @@ motor_direct_driver_t motor1;
 
 int main(void)
 {
-    //Stop Watchdog Timer
+    // Stop Watchdog Timer
     WDT_A_hold(WDT_A_BASE);
 
     // On-board LEDs
@@ -21,7 +21,6 @@ int main(void)
     GPIO_setOutputLowOnPin(ONBOARD_LED2_GPIO_PORT, ONBOARD_LED2_GPIO_PIN);
 
     // Clock Configuration
-    // ---
     clock_driver_open();
 
     // Motor Controllers
@@ -49,29 +48,22 @@ int main(void)
 
     // Servo Controller
     servo_driver_t writing_utensil_servo;
-    writing_utensil_servo.motor_controller.motor_magnitude_gpio_port =
+    writing_utensil_servo.pwm_driver.gpio_port =
             WRITING_UTENSIL_SERVO_SIGNAL_GPIO_PORT;
-    writing_utensil_servo.motor_controller.motor_magnitude_gpio_pin =
+    writing_utensil_servo.pwm_driver.gpio_pin =
             WRITING_UTENSIL_SERVO_SIGNAL_GPIO_PIN;
-    writing_utensil_servo.motor_controller.timer_aX_base_address =
-            WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_BASE_ADDRESS;
-    writing_utensil_servo.motor_controller.timer_aX_channel_compare_register =
-            WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_CAPCOMP_REG;
-
-    writing_utensil_servo.motor_controller.motor_magnitude_gpio_timer_ax_channel_module_function =
+    writing_utensil_servo.pwm_driver.gpio_timer_aX_channel_module_function =
             WRITING_UTENSIL_SERVO_SIGNAL_GPIO_TIMER_AX_CHANNEL_MODULE_FUNCTION;
-    // GROSS: use LCD-tied pin which won't be used.
-    writing_utensil_servo.motor_controller.motor_direction_gpio_port =
-            GPIO_PORT_P7;
-    writing_utensil_servo.motor_controller.motor_direction_gpio_pin =
-            GPIO_PORT_P1;
+    writing_utensil_servo.pwm_driver.timer_aX_base_address =
+            WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_BASE_ADDRESS;
+    writing_utensil_servo.pwm_driver.timer_aX_channel_compare_register =
+            WRITING_UTENSIL_SERVO_SIGNAL_TIMER_AX_CAPCOMP_REG;
+    writing_utensil_servo.pwm_driver.timer_aX_clock_source =
+            TIMER_A_CLOCKSOURCE_ACLK;
+    writing_utensil_servo.pwm_driver.timer_aX_clock_source_divider =
+            TIMER_A_CLOCKSOURCE_DIVIDER_1;
+    writing_utensil_servo.pwm_driver.timer_aX_period = 400;
     servo_driver_open(&writing_utensil_servo);
-
-
-    servo_driver_move_to(&writing_utensil_servo, 180);
-
-
-
 
     // Limit Switch Controllers
 
@@ -80,6 +72,10 @@ int main(void)
 
     // Global enable interrupts
     __enable_interrupt();
+
+
+    // DEBUG: test servo movement
+    servo_driver_move_to(&writing_utensil_servo, 0);
 
     while(1){
         encoder_driver_calculate_kinematics(&encoder1);

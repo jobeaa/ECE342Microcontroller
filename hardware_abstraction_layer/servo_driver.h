@@ -8,15 +8,13 @@
 #ifndef SERVO_DRIVER_H_
 #define SERVO_DRIVER_H_
 
-#include "motor_direct_driver.h"
-
-#include <stdbool.h>
+#include "pwm_driver.h"
 
 // positive rotation is counter-clock-wise
 #define POSITION_MAX_DEGREES 180
 
 typedef struct {
-    motor_direct_driver_t motor_controller;
+    pwm_driver_t pwm_driver;
 } servo_driver_t;
 
 // Initialize driver and underlying peripherals.

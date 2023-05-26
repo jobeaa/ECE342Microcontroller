@@ -7,26 +7,27 @@
 
 #include "servo_driver.h"
 
-#define POWER_SIGNAL_POSITION_MAX 10
-#define POWER_SIGNAL_POSITION_MIN 100
+#define DUTY_CYCLE_0_to_1_TIMES_1024_POSITION_MAX 27
+#define DUTY_CYCLE_0_to_1_TIMES_1024_POSITION_MIN 256
 
 
 void servo_driver_open(servo_driver_t* driver) {
-    motor_direct_driver_open(&(driver->motor_controller));
+    pwm_driver_open(&(driver->pwm_driver));
 }
 
-inline void servo_driver_move_to(servo_driver_t* driver, uint16_t position_degrees) {
+void servo_driver_move_to(servo_driver_t* driver, uint16_t position_degrees) {
     if(position_degrees > POSITION_MAX_DEGREES) {
         position_degrees = POSITION_MAX_DEGREES;
     }
 
     // linear mapping between angular position and pwm control signal
-    int16_t slope_times_10 = 10*(POWER_SIGNAL_POSITION_MIN - POWER_SIGNAL_POSITION_MAX)/(0 - POSITION_MAX_DEGREES);
-    int16_t y_intercept = POWER_SIGNAL_POSITION_MIN;
-    int16_t position_power = ((int16_t)(slope_times_10*position_degrees))/10 + y_intercept;
+    int16_t slope_times_10 = 10*(DUTY_CYCLE_0_to_1_TIMES_1024_POSITION_MIN - DUTY_CYCLE_0_to_1_TIMES_1024_POSITION_MAX) /
+            (0 - POSITION_MAX_DEGREES);
+    int16_t y_intercept = DUTY_CYCLE_0_to_1_TIMES_1024_POSITION_MIN;
+    int16_t position_duty_cycle_0_to_1_times_1024 = ((int16_t)(slope_times_10*position_degrees))/10 + y_intercept;
 
     // servo pwm signal period cannot be too large. tested with ~12 ms.
-    motor_direct_driver_set_output(
-            &(driver->motor_controller),
-            position_power);
+    pwm_driver_set_duty_cycle(
+            &(driver->pwm_driver),
+            position_duty_cycle_0_to_1_times_1024);
 }
