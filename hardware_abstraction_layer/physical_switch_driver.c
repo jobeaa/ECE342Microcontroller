@@ -52,18 +52,15 @@ inline static void register_physical_switch_event(physical_switch_driver_t* driv
 void physical_switch_driver_open(physical_switch_driver_t* driver) {
     GPIO_setAsInputPinWithPullUpResistor(driver->gpio_port, driver->gpio_pin);
     GPIO_enableInterrupt(driver->gpio_port, driver->gpio_pin);
-    GPIO_selectInterruptEdge(driver->gpio_port, driver->gpio_pin, GPIO_LOW_TO_HIGH_TRANSITION);
+    GPIO_selectInterruptEdge(driver->gpio_port, driver->gpio_pin, GPIO_HIGH_TO_LOW_TRANSITION);
     GPIO_clearInterrupt(driver->gpio_port, driver->gpio_pin);
 
     register_physical_switch_event(driver);
 }
 
-void ISR_registered_physical_switch_event_dispatcher(uint16_t gpio_port) {
-    uint16_t gpio_port_first_index = get_registered_switch_pressed_event_index(gpio_port, GPIO_PIN0);
-    uint16_t i;
-    for(i = gpio_port_first_index; i < gpio_port_first_index + GPIO_PINS_PER_PORT; i++) {
-        if(registered_switch_pressed_events[i] != 0) {
-            (*registered_switch_pressed_events[i])();
-        }
+void ISR_registered_physical_switch_event_dispatcher(uint16_t gpio_port, uint16_t gpio_ith_pin) {
+    uint16_t event_index = (gpio_port == GPIO_PORT_P1) ? gpio_ith_pin : gpio_ith_pin + GPIO_PINS_PER_PORT;
+    if(registered_switch_pressed_events[event_index] != 0) {
+        (*registered_switch_pressed_events[event_index])();
     }
 }

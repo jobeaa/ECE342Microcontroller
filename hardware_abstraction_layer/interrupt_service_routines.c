@@ -22,7 +22,7 @@ void P1_ISR (void)
     //S1 IFG cleared
     GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
 
-    ISR_registered_physical_switch_event_dispatcher(GPIO_PORT_P1);
+    //ISR_registered_physical_switch_event_dispatcher(GPIO_PORT_P1);
 
     //encoder_driver_signal_a_rising_edge_event(&encoder1);
 }
@@ -35,8 +35,15 @@ __attribute__((interrupt(PORT8_VECTOR)))
 #endif
 void P2_ISR (void)
 {
-    //S1 IFG cleared
-    GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN_ALL16);
+    uint16_t gpio_pin_interrupt_status = GPIO_getInterruptStatus(GPIO_PORT_P2, GPIO_PIN_ALL8);
+    uint16_t i;
+    for(i = 0; i < 8; i++) {
+        if(gpio_pin_interrupt_status & (1<<i)) {
+            // ith pin ISR
+            GPIO_clearInterrupt(GPIO_PORT_P2, 1<<i);
 
-    ISR_registered_physical_switch_event_dispatcher(GPIO_PORT_P2);
+            ISR_registered_physical_switch_event_dispatcher(GPIO_PORT_P2, i);
+
+        }
+    }
 }

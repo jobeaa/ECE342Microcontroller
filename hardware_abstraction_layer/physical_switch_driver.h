@@ -20,6 +20,6 @@ typedef struct {
 void physical_switch_driver_open(physical_switch_driver_t* driver);
 
 // "Private". Used within the HAL to abstract away ISRs bound to a specific pin.
-void ISR_registered_physical_switch_event_dispatcher(uint16_t gpio_port);
+void ISR_registered_physical_switch_event_dispatcher(uint16_t gpio_port, uint16_t gpio_pin);
 
 #endif // PHYSICAL_SWITCH_DRIVER_H
