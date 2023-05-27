@@ -22,7 +22,7 @@ static int get_registered_switch_pressed_event_index(uint16_t gpio_port, uint16_
     uint16_t i;
     for(i = 0; i < GPIO_PINS_PER_PORT; i++) {
         if(gpio_pin & (1<<i)) {
-            return i;
+            return registered_event_index + i;
         }
     }
     return -1;
@@ -59,8 +59,9 @@ void physical_switch_driver_open(physical_switch_driver_t* driver) {
 }
 
 void ISR_registered_physical_switch_event_dispatcher(uint16_t gpio_port) {
+    uint16_t gpio_port_first_index = get_registered_switch_pressed_event_index(gpio_port, GPIO_PIN0);
     uint16_t i;
-    for(i = 0; i < GPIO_PINS_PER_PORT*2; i++) {
+    for(i = gpio_port_first_index; i < gpio_port_first_index + GPIO_PINS_PER_PORT; i++) {
         if(registered_switch_pressed_events[i] != 0) {
             (*registered_switch_pressed_events[i])();
         }
