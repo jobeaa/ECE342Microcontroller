@@ -8,12 +8,16 @@
 
 #include "physical_switch_driver.h"
 #include "gpio.h"
+#include "clock_driver.h"
+
+#define GPIO_ISR_DEBOUNCING_TIME_MS 8
 
 // THIS IMPLEMENTATION IS KINDA GROSS BC ITS VERY HARDWARE DEPENDENT, BUT IT WORKS.
 // MSP430FR4133 only has interrupts on ports 1 and 2; 8 pins per port on 64-pin LFQP package.
 #define GPIO_PINS_PER_PORT 8
 
 static void (*registered_switch_pressed_events[16])(void);
+static clock_driver_time_t last_event_timestamps[16];
 
 static int get_registered_switch_pressed_event_index(uint16_t gpio_port, uint16_t gpio_pin) {
     uint16_t registered_event_index = (gpio_port == GPIO_PORT_P1) ? 0 : GPIO_PINS_PER_PORT;
@@ -26,11 +30,6 @@ static int get_registered_switch_pressed_event_index(uint16_t gpio_port, uint16_
         }
     }
     return -1;
-}
-
-static void get_gpio_port_pin(uint16_t* return_gpio_port, uint16_t* return_gpio_pin,
-                              uint16_t registered_event_index) {
-
 }
 
 inline static void register_physical_switch_event(physical_switch_driver_t* driver) {
@@ -60,7 +59,17 @@ void physical_switch_driver_open(physical_switch_driver_t* driver) {
 
 void ISR_registered_physical_switch_event_dispatcher(uint16_t gpio_port, uint16_t gpio_ith_pin) {
     uint16_t event_index = (gpio_port == GPIO_PORT_P1) ? gpio_ith_pin : gpio_ith_pin + GPIO_PINS_PER_PORT;
-    if(registered_switch_pressed_events[event_index] != 0) {
-        (*registered_switch_pressed_events[event_index])();
+    if(registered_switch_pressed_events[event_index] != SWITCH_EVENT_DO_NOTHING) {
+        // Switch De-bouncing
+        clock_driver_time_t current_timestamp;
+        clock_driver_get_rtc_time(&(current_timestamp));
+        if(((int16_t)(current_timestamp.time_ms - last_event_timestamps[gpio_ith_pin].time_ms))
+                >= GPIO_ISR_DEBOUNCING_TIME_MS) {
+
+            // only care about ms
+            last_event_timestamps[gpio_ith_pin].time_ms = current_timestamp.time_ms;
+
+            (*registered_switch_pressed_events[event_index])();
+        }
     }
 }
