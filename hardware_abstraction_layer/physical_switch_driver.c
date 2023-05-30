@@ -10,7 +10,7 @@
 #include "gpio.h"
 #include "clock_driver.h"
 
-#define GPIO_ISR_DEBOUNCING_TIME_MS 15
+#define GPIO_ISR_DEBOUNCING_TIME_MS 5
 
 // THIS IMPLEMENTATION IS KINDA GROSS BC ITS VERY HARDWARE DEPENDENT, BUT IT WORKS.
 // MSP430FR4133 only has interrupts on ports 1 and 2; 8 pins per port on 64-pin LFQP package.
@@ -69,11 +69,13 @@ void ISR_registered_physical_switch_event_dispatcher(uint16_t gpio_port, uint16_
     if(is_next_transition_high_to_low_switches[event_index]) {
         if(registered_switch_released_events[event_index] != SWITCH_EVENT_DO_NOTHING) {
             event = registered_switch_released_events[event_index];
+            GPIO_selectInterruptEdge(gpio_port, (1<<gpio_ith_pin), GPIO_HIGH_TO_LOW_TRANSITION);
         }
     }
     else {
         if(registered_switch_pressed_events[event_index] != SWITCH_EVENT_DO_NOTHING) {
             event = registered_switch_pressed_events[event_index];
+            GPIO_selectInterruptEdge(gpio_port, (1<<gpio_ith_pin), GPIO_LOW_TO_HIGH_TRANSITION);
         }
     }
     is_next_transition_high_to_low_switches[event_index] =
