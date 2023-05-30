@@ -5,9 +5,18 @@
 #include "clock_driver.h"
 #include "motor_direct_driver.h"
 #include "servo_driver.h"
+#include "physical_switch_driver.h"
 
 encoder_driver_t encoder1;
 motor_direct_driver_t motor1;
+
+void limit_switch1_event(void) {
+    GPIO_toggleOutputOnPin(ONBOARD_LED1_GPIO_PORT, ONBOARD_LED1_GPIO_PIN);
+}
+
+void pushbutton_s2_event(void) {
+    GPIO_toggleOutputOnPin(ONBOARD_LED2_GPIO_PORT, ONBOARD_LED2_GPIO_PIN);
+}
 
 int main(void)
 {
@@ -65,7 +74,24 @@ int main(void)
     writing_utensil_servo.pwm_driver.timer_aX_period = 400;
     servo_driver_open(&writing_utensil_servo);
 
-    // Limit Switch Controllers
+    // Physical Switches
+    physical_switch_driver_t linkage_1_home_limit_switch_driver;
+    linkage_1_home_limit_switch_driver.gpio_port =
+            LIMIT_SWITCH_LINKAGE_1_HOME_GPIO_PORT;
+    linkage_1_home_limit_switch_driver.gpio_pin =
+            LIMIT_SWITCH_LINKAGE_1_HOME_GPIO_PIN;
+    linkage_1_home_limit_switch_driver.switch_pressed_event = &limit_switch1_event;
+    linkage_1_home_limit_switch_driver.switch_released_event = &limit_switch1_event;
+    physical_switch_driver_open(&linkage_1_home_limit_switch_driver);
+
+    physical_switch_driver_t pushbutton_s2_switch_driver;
+    pushbutton_s2_switch_driver.gpio_port =
+            PUSHBUTTON_S2_GPIO_PORT;
+    pushbutton_s2_switch_driver.gpio_pin =
+            PUSHBUTTON_S2_GPIO_PIN;
+    pushbutton_s2_switch_driver.switch_pressed_event = &pushbutton_s2_event;
+    pushbutton_s2_switch_driver.switch_released_event = SWITCH_EVENT_DO_NOTHING;
+    physical_switch_driver_open(&pushbutton_s2_switch_driver);
 
     // See comment in declaration. Used in all examples.
     PMM_unlockLPM5();
@@ -80,18 +106,4 @@ int main(void)
     while(1){
         encoder_driver_calculate_kinematics(&encoder1);
     }
-}
-
-#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
-#pragma vector=PORT1_VECTOR
-__interrupt
-#elif defined(__GNUC__)
-__attribute__((interrupt(PORT1_VECTOR)))
-#endif
-void P1_ISR (void)
-{
-    //S1 IFG cleared
-    GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
-
-    //encoder_driver_signal_a_rising_edge_event(&encoder1);
 }
