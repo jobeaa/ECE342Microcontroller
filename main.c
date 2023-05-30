@@ -76,19 +76,21 @@ int main(void)
 
     // Physical Switches
     physical_switch_driver_t linkage_1_home_limit_switch_driver;
-    linkage_1_home_limit_switch_driver.switch_pressed_event = &limit_switch1_event;
     linkage_1_home_limit_switch_driver.gpio_port =
             LIMIT_SWITCH_LINKAGE_1_HOME_GPIO_PORT;
     linkage_1_home_limit_switch_driver.gpio_pin =
             LIMIT_SWITCH_LINKAGE_1_HOME_GPIO_PIN;
+    linkage_1_home_limit_switch_driver.switch_pressed_event = &limit_switch1_event;
+    linkage_1_home_limit_switch_driver.switch_released_event = &limit_switch1_event;
     physical_switch_driver_open(&linkage_1_home_limit_switch_driver);
 
     physical_switch_driver_t pushbutton_s2_switch_driver;
-    pushbutton_s2_switch_driver.switch_pressed_event = &pushbutton_s2_event;
     pushbutton_s2_switch_driver.gpio_port =
             PUSHBUTTON_S2_GPIO_PORT;
     pushbutton_s2_switch_driver.gpio_pin =
             PUSHBUTTON_S2_GPIO_PIN;
+    pushbutton_s2_switch_driver.switch_pressed_event = &pushbutton_s2_event;
+    pushbutton_s2_switch_driver.switch_released_event = SWITCH_EVENT_DO_NOTHING;
     physical_switch_driver_open(&pushbutton_s2_switch_driver);
 
     // See comment in declaration. Used in all examples.

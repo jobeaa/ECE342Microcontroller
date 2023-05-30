@@ -17,6 +17,7 @@ typedef struct {
     uint16_t gpio_port;
     uint16_t gpio_pin;
     void (*switch_pressed_event)(void);
+    void (*switch_released_event)(void);
 } physical_switch_driver_t;
 
 // Initialize driver and underlying peripherals.
