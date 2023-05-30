@@ -10,10 +10,14 @@
 
 #include <stdint.h>
 
+// when switch's event(s) are set as this, nothing will happen when the event occurs
+#define SWITCH_EVENT_DO_NOTHING 0
+
 typedef struct {
     uint16_t gpio_port;
     uint16_t gpio_pin;
     void (*switch_pressed_event)(void);
+    void (*switch_released_event)(void);
 } physical_switch_driver_t;
 
 // Initialize driver and underlying peripherals.
