@@ -36,14 +36,26 @@ int main(void)
     encoder1.data_buffer = &encoder1_ring_buffer;
     encoder_driver_open(&encoder1);
 
-    motor1.motor_magnitude_gpio_port = MOTOR_1_MAGNITUDE_GPIO_PORT;
-    motor1.motor_magnitude_gpio_pin = MOTOR_1_MAGNITUDE_GPIO_PIN;
-    motor1.timer_aX_base_address = MOTOR_1_MAGNITUDE_TIMER_AX_BASE_ADDRESS;
-    motor1.timer_aX_channel_compare_register = MOTOR_1_MAGNITUDE_TIMER_AX_CHANNEL;
-    motor1.motor_magnitude_gpio_timer_ax_channel_module_function =
+    motor1.motor_magnitude_pwm_driver.gpio_port =
+            MOTOR_1_MAGNITUDE_GPIO_PORT;
+    motor1.motor_magnitude_pwm_driver.gpio_pin =
+            MOTOR_1_MAGNITUDE_GPIO_PIN;
+    motor1.motor_magnitude_pwm_driver.gpio_timer_aX_channel_module_function =
             MOTOR_1_MAGNITUDE_GPIO_TIMER_AX_CHANNEL_MODULE_FUNCTION;
-    motor1.motor_direction_gpio_port = MOTOR_1_DIRECTION_GPIO_PORT;
-    motor1.motor_direction_gpio_pin = MOTOR_1_DIRECTION_GPIO_PIN;
+    motor1.motor_magnitude_pwm_driver.timer_aX_base_address =
+            MOTOR_1_MAGNITUDE_TIMER_AX_BASE_ADDRESS;
+    motor1.motor_magnitude_pwm_driver.timer_aX_channel_compare_register =
+            MOTOR_1_MAGNITUDE_TIMER_AX_CAPCOMP_REG;
+    motor1.motor_magnitude_pwm_driver.timer_aX_clock_source =
+            TIMER_A_CLOCKSOURCE_SMCLK;
+    motor1.motor_magnitude_pwm_driver.timer_aX_clock_source_divider =
+            TIMER_A_CLOCKSOURCE_DIVIDER_1;
+    motor1.motor_magnitude_pwm_driver.timer_aX_period = (UINT16_MAX/2);
+    pwm_driver_open(&(motor1.motor_magnitude_pwm_driver));
+    motor1.motor_direction_enable_1_gpio_port = MOTOR_1_DIRECTION_ENABLE_1_GPIO_PORT;
+    motor1.motor_direction_enable_1_gpio_pin = MOTOR_1_DIRECTION_ENABLE_1_GPIO_PIN;
+    motor1.motor_direction_enable_2_gpio_port = MOTOR_1_DIRECTION_ENABLE_2_GPIO_PORT;
+    motor1.motor_direction_enable_2_gpio_pin = MOTOR_1_DIRECTION_ENABLE_2_GPIO_PIN;
     motor_direct_driver_open(&motor1);
 
     // Servo Controller
@@ -76,9 +88,11 @@ int main(void)
 
     // DEBUG: test servo movement
     servo_driver_move_to(&writing_utensil_servo, 0);
+    // DEBUG: test motor movement
+    motor_direct_driver_set_output(&motor1, 500);
 
     while(1){
-        encoder_driver_calculate_kinematics(&encoder1);
+        //encoder_driver_calculate_kinematics(&encoder1);
     }
 }
 
