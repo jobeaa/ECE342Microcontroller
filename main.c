@@ -1,4 +1,7 @@
 #include <hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/driverlib.h>
+#include <interpreter/receiver.h>
+#include <interpreter/commands.h>
+#include <interpreter/lcd_msg.h>
 
 int main(void)
 {
@@ -15,8 +18,7 @@ int main(void)
     // See comment in declaration. Used in all examples.
     PMM_unlockLPM5();
 
-    // Main Loop
-    while(1){
+    init_receiver();
 
-    }
+    while (1) receiver_main();
 }
