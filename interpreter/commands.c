@@ -8,8 +8,6 @@
 #include <math.h>
 
 
-#include <stdio.h>
-
 float MULTIPLIER = 1.0;
 bool ABSOLUTE = true;
 bool TOOL_CHANGE = false;
@@ -92,7 +90,6 @@ int cmd_to_nargs(uint8_t cmd) {
 
 
 void G00(uint8_t arg1, uint8_t arg2) {
-    printf("G00\n");
     // Wait for the tool change to happen
     while (TOOL_CHANGE);
 
@@ -159,7 +156,6 @@ void G00(uint8_t arg1, uint8_t arg2) {
 
 
 void G01(uint8_t arg1, uint8_t arg2) {
-    printf("G01\n");
     // Wait for tool change
     while (TOOL_CHANGE);
 
@@ -211,10 +207,6 @@ void G01(uint8_t arg1, uint8_t arg2) {
         current_y = current_p.y;
     } while (dist < distance(current_x, current_y, target_x, target_y));
 
-
-    // Lower the pen
-    servo_controller_move_to(servo_cmd);
-
     // Keep track of where we are
     CURRENT_X = current_x;
     CURRENT_Y = current_y;
@@ -222,38 +214,39 @@ void G01(uint8_t arg1, uint8_t arg2) {
 
 
 void G20(void) {
-    printf("G20\n");
     MULTIPLIER = 1.0;
 }
 
 
 void G21(void) {
-    printf("G21\n");
     MULTIPLIER = 2.54;
 }
 
 
 void G90(void) {
-    printf("G90\n");
     ABSOLUTE = true;
 }
 
 
 void G91(void) {
-    printf("G91\n");
     ABSOLUTE = false;
 }
 
 
+void M02(void) {
+    while (TOOL_CHANGE);
+}
+
+
 void M06(void) {
-    printf("M06\n");
     write_msg("CHANGE", "TOOL  ");
     TOOL_CHANGE = true;
 }
 
 
 void M72(void) {
-    printf("M72\n");
+    while (TOOL_CHANGE);
+
     write_msg("AAAAAA", "AAAAAA");
 }
 

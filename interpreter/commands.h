@@ -33,6 +33,7 @@ void G20(void);
 void G21(void);
 void G90(void);
 void G91(void);
+void M02(void);
 void M06(void);
 void M72(void);
 
