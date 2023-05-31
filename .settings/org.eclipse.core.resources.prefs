@@ -1,4 +1,8 @@
 eclipse.preferences.version=1
+encoding//Debug/3rd-party-lib/Ring-Buffer/examples/subdir_rules.mk=UTF-8
+encoding//Debug/3rd-party-lib/Ring-Buffer/examples/subdir_vars.mk=UTF-8
+encoding//Debug/3rd-party-lib/Ring-Buffer/subdir_rules.mk=UTF-8
+encoding//Debug/3rd-party-lib/Ring-Buffer/subdir_vars.mk=UTF-8
 encoding//Debug/HAL/ti_driverlib/MSP430FR2xx_4xx/subdir_rules.mk=UTF-8
 encoding//Debug/HAL/ti_driverlib/MSP430FR2xx_4xx/subdir_vars.mk=UTF-8
 encoding//Debug/driverlib/MSP430FR2xx_4xx/subdir_rules.mk=UTF-8
