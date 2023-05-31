@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifndef GCODE_COMMANDS_H_
 #define GCODE_COMMANDS_H_

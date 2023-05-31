@@ -11,7 +11,7 @@
 
 // Target frequency and actual frequency differ. Set target to just under 16Mhz for
 // MCLK AND SMCLK
-#define TARGET_SYS_CLK_FREQ_KHZ     15600
+#define TARGET_SYS_CLK_FREQ_KHZ     7810
 #define XT1_FREQ_HZ                 32768
 #define FLL_REFERENCE_FREQ_KHZ      (uint32_t)(XT1_FREQ_HZ/1000)
 #define RTC_MODULUS                 0xFFFF      // set the modulus as large as possible

@@ -101,9 +101,11 @@ int main(void)
     // See comment in declaration. Used in all examples.
     PMM_unlockLPM5();
 
+    // Global enable interrupts
+    __enable_interrupt();
+
     init_receiver();
 
     while (1) receiver_main();
-    // Global enable interrupts
-    __enable_interrupt();
+
 }

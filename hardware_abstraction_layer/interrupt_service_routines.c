@@ -37,7 +37,7 @@ void P1_ISR (void)
 #pragma vector=PORT2_VECTOR
 __interrupt
 #elif defined(__GNUC__)
-__attribute__((interrupt(PORT8_VECTOR)))
+__attribute__((interrupt(PORT2_VECTOR)))
 #endif
 void P2_ISR (void)
 {

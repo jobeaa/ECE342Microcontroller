@@ -2,15 +2,14 @@
 #include <interpreter/commands.h>
 #include <interpreter/lcd_msg.h>
 #include <hardware_abstraction_layer/motor_controller.h>
-#include <hardware_abstraction_layer/servo_controller.h>
+#include <hardware_abstraction_layer/servo_driver.h>
 #include <driverlib.h>
-#include <stdbool.h>
 #include <math.h>
 
+bool TOOL_CHANGE = false;
 
 float MULTIPLIER = 1.0;
 bool ABSOLUTE = true;
-bool TOOL_CHANGE = false;
 
 const int LENGTH_1 = 6;
 const int LENGTH_2 = 6;
@@ -94,8 +93,8 @@ void G00(uint8_t arg1, uint8_t arg2) {
     while (TOOL_CHANGE);
 
     // Raise the servo
-    servo_controller_t servo_cmd = {};
-    servo_controller_move_to(servo_cmd);
+    servo_driver_t servo_cmd = {};
+    servo_driver_move_to(&servo_cmd, 90);
 
     int target_x, target_y, current_x, current_y;
     int dist;
@@ -147,7 +146,7 @@ void G00(uint8_t arg1, uint8_t arg2) {
 
 
     // Lower the pen
-    servo_controller_move_to(servo_cmd);
+    servo_driver_move_to(&servo_cmd, 0);
 
     // Keep track of where we are
     CURRENT_X = current_x;
@@ -251,12 +250,4 @@ void M72(void) {
 }
 
 
-// Interrupt vector, clears the tool change bool and the LCD
-#pragma vector = PORT2_VECTOR
-__interrupt void PORT2_ISR(void) {
-    if (P2IV_P2IFG6) {
-        write_msg("      ", "      ");
-        TOOL_CHANGE = false;
-        GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN6);
-    }
-}
+
