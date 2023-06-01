@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "ringbuffer.h"
+#include "clock_driver.h"
 
 #define DATA_BUFFER_SIZE_MIN 32
 
@@ -22,7 +23,7 @@ typedef struct {
     bool has_processed_a_reading;
     int16_t pulse_count;
     float instantaneous_velocity_pulse_per_ms;
-
+    clock_driver_time_t delta_t;
 } encoder_driver_t;
 
 // Initialize driver and underlying peripherals. Returns true on success, false on failure.

@@ -27,10 +27,10 @@ float pid_controller_update(pid_controller_t *pid, float setpoint,
   }
   pid->previous_error = error;
 
-  pid->differentiator =
-      pid->derivative_gain *
-      ((measurement - pid->previous_measurement) / (pid->sample_time_seconds));
-  pid->previous_measurement = measurement;
+//  pid->differentiator =
+//      pid->derivative_gain *
+//      ((measurement - pid->previous_measurement) / (pid->sample_time_seconds));
+//  pid->previous_measurement = measurement;
 
   float output = pid->proportion + pid->integrator + pid->differentiator;
   if (output > pid->output_limit_max) {

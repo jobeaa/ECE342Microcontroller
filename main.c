@@ -5,6 +5,7 @@
 #include "clock_driver.h"
 #include "motor_direct_driver.h"
 #include "servo_driver.h"
+#include "pid_controller.h"
 
 encoder_driver_t encoder1;
 motor_direct_driver_t motor1;
@@ -85,14 +86,38 @@ int main(void)
     // Global enable interrupts
     __enable_interrupt();
 
-
     // DEBUG: test servo movement
     servo_driver_move_to(&writing_utensil_servo, 0);
-    // DEBUG: test motor movement
-    motor_direct_driver_set_output(&motor1, 500);
+
+
+    // TODO: move to motor controller module
+    pid_controller_t motor1_pid_controller;
+    motor1_pid_controller.proportion_gain = 0.011f;
+    motor1_pid_controller.integration_gain = 0.011f;
+    motor1_pid_controller.derivative_gain = 0.01f;
+    motor1_pid_controller.output_limit_max = 1024.0f;
+    motor1_pid_controller.output_limit_min = -1024.0f;
+    motor1_pid_controller.integral_limit_max = 20.0f;
+    motor1_pid_controller.integral_limit_min = 20.0f;
+    pid_controller_init(&motor1_pid_controller);
+
+    // wait for some time to stablize power?
+    clock_driver_time_t current_time, initial_time;
+    clock_driver_get_rtc_time(&current_time);
+    clock_driver_get_rtc_time(&initial_time);
+    while((current_time.time_ms - initial_time.time_ms) < 10000) {
+        clock_driver_get_rtc_time(&current_time);
+    }
+    GPIO_setOutputHighOnPin(ONBOARD_LED1_GPIO_PORT, ONBOARD_LED1_GPIO_PIN);
+
 
     while(1){
-        //encoder_driver_calculate_kinematics(&encoder1);
+        encoder_driver_calculate_kinematics(&encoder1);
+        // inject derivative from encoder driver into pid controller
+        motor1_pid_controller.differentiator = encoder1.instantaneous_velocity_pulse_per_ms;
+        motor1_pid_controller.sample_time_seconds = encoder1.delta_t.time_ms + (encoder1.delta_t.time_us/1000);
+        float output = pid_controller_update(&motor1_pid_controller, 500, encoder1.pulse_count);
+        motor_direct_driver_set_output(&motor1, output);
     }
 }
 

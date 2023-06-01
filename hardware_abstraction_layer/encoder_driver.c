@@ -6,7 +6,6 @@
  */
 #include "encoder_driver.h"
 #include "gpio.h"
-#include "clock_driver.h"
 
 #define PULSES_PER_MOTOR_SHAFT_REVOLUTION   16
 #define MOTOR_SHAFT_TO_OUTPUT_SHAFT_RATIO   (131/1)
@@ -76,19 +75,19 @@ void encoder_driver_calculate_kinematics(encoder_driver_t* driver) {
         const uint16_t second_last_index = last_index - 1;
 
         // (y2-y1)/(x2-x1)
-        float delta_t_ms = ((int32_t)readings[last_index].time.time_ms - (int32_t)readings[second_last_index].time.time_ms);
-        float delta_t_us = (((int16_t) readings[last_index].time.time_us) - ((int16_t) readings[second_last_index].time.time_us));
+        driver->delta_t.time_ms = ((int32_t)readings[last_index].time.time_ms - (int32_t)readings[second_last_index].time.time_ms);
+        driver->delta_t.time_us = (((int16_t) readings[last_index].time.time_us) - ((int16_t) readings[second_last_index].time.time_us));
 
         // BUG: sometimes the latest reading will be older than the second latest reading or the delta will blow up.
         //      This patch fixes the problem by ignoring such readings.
-        if((delta_t_ms < 0) || (delta_t_ms > ((float)1000*60*60*24*2))) {
+        if((driver->delta_t.time_ms < 0) || (driver->delta_t.time_ms > ((float)1000*60*60*24*2))) {
             //flush the buffer and return
             ring_buffer_dequeue_arr(driver->data_buffer, (uint8_t* )(readings), ring_buffer_get_allocated_size(driver->data_buffer));
             return;
         }
 
-        delta_t_ms = (delta_t_ms + (delta_t_us / 1000));
-        driver->instantaneous_velocity_pulse_per_ms = (driver->pulse_count - second_last_reading_pulse_count) / delta_t_ms;
+        driver->delta_t.time_ms = (driver->delta_t.time_ms + (driver->delta_t.time_us / 1000));
+        driver->instantaneous_velocity_pulse_per_ms = (driver->pulse_count - second_last_reading_pulse_count) / driver->delta_t.time_ms;
     }
 
     driver->has_processed_a_reading = true;
