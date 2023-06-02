@@ -55,9 +55,6 @@ void init_receiver(void) {
         .secondModReg = 0x49,
         .overSampling = 1
     };
-    physical_switch_driver_t clear_btn = {.gpio_port = GPIO_PORT_P2, .gpio_pin = GPIO_PIN6, .switch_pressed_event = &port2_pin6_isr, .switch_released_event = SWITCH_EVENT_DO_NOTHING};
-    physical_switch_driver_open(&clear_btn);
-
 
     P1SEL0 |= BIT0 | BIT1;                    // set 2-UART pin as second function
     EUSCI_A_UART_init(__MSP430_BASEADDRESS_EUSCI_A0__, &init_param);
@@ -86,6 +83,13 @@ void receiver_main(void) {
 
    uint8_t byte_stream[50];
 
+   physical_switch_driver_t clear_btn = {.gpio_port = GPIO_PORT_P2,
+                                         .gpio_pin = GPIO_PIN6,
+                                         .switch_pressed_event = SWITCH_EVENT_DO_NOTHING,
+                                         .switch_released_event = SWITCH_EVENT_DO_NOTHING
+   };
+   physical_switch_driver_open(&clear_btn);
+
    write_msg("INPUT ", "CMDS  ");
    slow_clock();
    while (recv_byte != M02_NUM) {
@@ -101,16 +105,20 @@ void receiver_main(void) {
    write_msg("      ", "      ");
    clock_driver_open();
 
+   physical_switch_driver_t clear_btn_enable = {.gpio_port = GPIO_PORT_P2,
+                                                .gpio_pin = GPIO_PIN6,
+                                                .switch_pressed_event = &port2_pin6_isr,
+                                                .switch_released_event = SWITCH_EVENT_DO_NOTHING
+   };
+   physical_switch_driver_open(&clear_btn_enable);
+
    for (i = 0; i < stream_size; i++) {
        // Read the command byte and determine how many arguments it has
        recv_byte = byte_stream[i];
        nargs = cmd_to_nargs(recv_byte);
 
        // Check if this is a valid command
-       if (nargs < 0) {
-           write_msg("FUCKFU", "FUCKFU");
-           while (1);
-       }
+       if (nargs < 0) return;
 
        // Determine which function to call
        switch (recv_byte) {
