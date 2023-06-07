@@ -17,6 +17,9 @@ const int LENGTH_2 = 6;
 int CURRENT_X = LENGTH_1 + LENGTH_2;
 int CURRENT_Y = 0;
 
+motor_controller_t contr1 = {};
+motor_controller_t contr2 = {};
+
 vec2 CURRENT_THETA = {
         0,
         0
@@ -126,8 +129,6 @@ void G00(uint8_t arg1, uint8_t arg2) {
     theta_0.y = CURRENT_THETA.y;
 
     vec2 current_p;
-    motor_controller_t contr1 = {};
-    motor_controller_t contr2 = {};
     do {
         // Find the change in position we need
         get_new_delta_theta(&theta_0, &delta_theta, &theta_ret);
@@ -188,8 +189,6 @@ void G01(uint8_t arg1, uint8_t arg2) {
     theta_0.y = CURRENT_THETA.y;
 
     vec2 current_p;
-    motor_controller_t contr1 = {};
-    motor_controller_t contr2 = {};
     do {
         // Find the change in position we need
         get_new_delta_theta(&theta_0, &delta_theta, &theta_ret);
@@ -246,7 +245,8 @@ void M06(void) {
 void M72(void) {
     while (TOOL_CHANGE);
 
-    write_msg("AAAAAA", "AAAAAA");
+    motor_controller_move_to(contr1, 0, 1);
+    motor_controller_move_to(contr2, 0, 1);
 }
 
 
