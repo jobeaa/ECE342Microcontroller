@@ -17,8 +17,8 @@ const int LENGTH_2 = 6;
 int CURRENT_X = LENGTH_1 + LENGTH_2;
 int CURRENT_Y = 0;
 
-motor_controller_t contr1 = {};
-motor_controller_t contr2 = {};
+extern motor_controller_t motor_controller_1;
+extern motor_controller_t motor_controller_2;
 
 vec2 CURRENT_THETA = {
         0,
@@ -136,8 +136,7 @@ void G00(uint8_t arg1, uint8_t arg2) {
         CURRENT_THETA.y += theta_ret.y;
 
         // Move the motors so they reach their positions at the same time
-        motor_controller_move_to(contr1, CURRENT_THETA.x, CURRENT_THETA.x / 0.1);
-        motor_controller_move_to(contr2, CURRENT_THETA.y, CURRENT_THETA.y / 0.1);
+        motor_controller_move_to(&motor_controller_1, &motor_controller_2, CURRENT_THETA.x, CURRENT_THETA.y, CURRENT_THETA.x / 0.1, CURRENT_THETA.y / 0.1);
 
         // Keep track of where we are
         get_point_from_theta(&CURRENT_THETA, &current_p);
@@ -196,8 +195,7 @@ void G01(uint8_t arg1, uint8_t arg2) {
         CURRENT_THETA.y += theta_ret.y;
 
         // Move the motors so they reach their positions at the same time
-        motor_controller_move_to(contr1, CURRENT_THETA.x, CURRENT_THETA.x / 0.5);
-        motor_controller_move_to(contr2, CURRENT_THETA.y, CURRENT_THETA.y / 0.5);
+        motor_controller_move_to(&motor_controller_1, &motor_controller_2, CURRENT_THETA.x, CURRENT_THETA.y, CURRENT_THETA.x / 0.5, CURRENT_THETA.y / 0.5);
 
         // Keep track of where we are
         get_point_from_theta(&CURRENT_THETA, &current_p);
@@ -245,8 +243,7 @@ void M06(void) {
 void M72(void) {
     while (TOOL_CHANGE);
 
-    motor_controller_move_to(contr1, 0, 1);
-    motor_controller_move_to(contr2, 0, 1);
+    motor_controller_move_to(&motor_controller_1,  &motor_controller_2,  0,  0,  1,  1);
 }
 
 
