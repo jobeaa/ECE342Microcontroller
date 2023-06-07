@@ -41,6 +41,15 @@ void clock_driver_open(void) {
     overflow_period_us = (((float) (RTC_MODULUS)) / ((float) smclk_freq_khz)) * 1000;
 }
 
+void clock_driver_block_ms(uint16_t time_ms) {
+    clock_driver_time_t initial_time, current_time;
+    clock_driver_get_rtc_time(&initial_time);
+    clock_driver_get_rtc_time(&current_time);
+    while(current_time.time_ms < (initial_time.time_ms + time_ms)) {
+        clock_driver_get_rtc_time(&current_time);
+    }
+}
+
 inline void clock_driver_get_rtc_time(clock_driver_time_t* time) {
     uint32_t current_rtc_overflow_count = rtc_overflow_count;
     uint32_t current_rtc_count = RTCCNT;

@@ -10,8 +10,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "ringbuffer.h"
+#include "clock_driver.h"
 
 #define DATA_BUFFER_SIZE_MIN 32
+
+#define PULSE_COUNT_PER_OUTPUT_REVOLUTION   2096
 
 typedef struct {
     uint16_t signal_a_gpio_port;
@@ -22,7 +25,7 @@ typedef struct {
     bool has_processed_a_reading;
     int16_t pulse_count;
     float instantaneous_velocity_pulse_per_ms;
-
+    clock_driver_time_t delta_t;
 } encoder_driver_t;
 
 // Initialize driver and underlying peripherals. Returns true on success, false on failure.
@@ -33,10 +36,12 @@ typedef struct {
 //  - RTC is enabled
 bool encoder_driver_open(encoder_driver_t* driver);
 
-// Deinitialize driver and underlying peripherals.
+// deinitialize driver and underlying peripherals.
 void encoder_driver_close(encoder_driver_t* driver);
 
-void encoder_driver_calculate_kinematics(encoder_driver_t* driver);
+// returns the time delta for the updated pulse count (ie the time difference of the first pulse in the buffer
+// and the last pulse in the buffer)
+void encoder_driver_update(encoder_driver_t* driver);
 
 inline float encoder_driver_get_position_degrees(encoder_driver_t* driver);
 

@@ -10,6 +10,10 @@
 
 #include "gpio.h"
 #include "physical_switch_driver.h"
+#include "motor_controller.h"
+
+extern motor_controller_t motor_controller_1;
+extern motor_controller_t motor_controller_2;
 
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
 #pragma vector=PORT1_VECTOR
@@ -26,7 +30,13 @@ void P1_ISR (void)
             // ith pin ISR
             GPIO_clearInterrupt(GPIO_PORT_P1, 1<<i);
 
-            ISR_registered_physical_switch_event_dispatcher(GPIO_PORT_P1, i);
+            // GROSS: hehe
+            if(i == motor_controller_1.encoder_driver->signal_a_gpio_pin) {
+                encoder_driver_signal_a_rising_edge_event(motor_controller_1.encoder_driver);
+            }
+            else {
+                ISR_registered_physical_switch_event_dispatcher(GPIO_PORT_P1, i);
+            }
         }
     }
 
@@ -48,7 +58,13 @@ void P2_ISR (void)
             // ith pin ISR
             GPIO_clearInterrupt(GPIO_PORT_P2, 1<<i);
 
-            ISR_registered_physical_switch_event_dispatcher(GPIO_PORT_P2, i);
+            // GROSS: hehe
+            if(i == motor_controller_2.encoder_driver->signal_a_gpio_pin) {
+                encoder_driver_signal_a_rising_edge_event(motor_controller_2.encoder_driver);
+            }
+            else {
+                ISR_registered_physical_switch_event_dispatcher(GPIO_PORT_P2, i);
+            }
         }
     }
 }

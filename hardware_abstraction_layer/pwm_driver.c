@@ -77,17 +77,19 @@ inline static void configure_and_set_gpio_low(pwm_driver_t* driver) {
 }
 
 void pwm_driver_set_duty_cycle(pwm_driver_t* driver, uint16_t duty_cycle_0_to_1_times_1024) {
-    uint16_t magnitude = (duty_cycle_0_to_1_times_1024 * driver->timer_aX_period)/1024;
+    uint32_t magnitude_32 = (((uint32_t)duty_cycle_0_to_1_times_1024) * ((uint32_t)driver->timer_aX_period)) /
+                    ((uint32_t)1024);
+    uint16_t magnitude = ((uint16_t)magnitude_32);
 
     configure_and_set_gpio_low(driver);
 
     // NOTE: user's guide states pwm should be zeroed before writing new value.
     //       driverlib implementation does not zero.
-    Timer_A_setCompareValue(
-            driver->timer_aX_base_address,
-            driver->timer_aX_channel_compare_register,
-            0
-            );
+//    Timer_A_setCompareValue(
+//            driver->timer_aX_base_address,
+//            driver->timer_aX_channel_compare_register,
+//            0
+//            );
 
     Timer_A_setCompareValue(
             driver->timer_aX_base_address,

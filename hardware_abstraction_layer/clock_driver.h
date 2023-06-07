@@ -23,6 +23,8 @@ typedef struct {
 // frequency is successful.
 void clock_driver_open(void);
 
+void clock_driver_block_ms(uint16_t time_ms);
+
 // gets the current rtc time. does not take into account the
 // execution from when the data is read to when it is returned.
 inline void clock_driver_get_rtc_time(clock_driver_time_t* time);
