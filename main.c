@@ -1,7 +1,19 @@
+#include <hardware_abstraction_layer/ti_driverlib/MSP430FR2xx_4xx/driverlib.h>
+#include <interpreter/receiver.h>
+#include <interpreter/commands.h>
+#include <interpreter/lcd_msg.h>
+
 #include "driverlib.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
+
+#include "board.h"
+#include "encoder_driver.h"
+#include "clock_driver.h"
+#include "motor_direct_driver.h"
+#include "servo_driver.h"
+#include "physical_switch_driver.h"
 
 #include "board.h"
 #include "clock_driver.h"
@@ -10,6 +22,14 @@
 
 motor_controller_t motor_controller_1;
 motor_controller_t motor_controller_2;
+
+void limit_switch1_event(void) {
+    GPIO_toggleOutputOnPin(ONBOARD_LED1_GPIO_PORT, ONBOARD_LED1_GPIO_PIN);
+}
+
+void pushbutton_s2_event(void) {
+    GPIO_toggleOutputOnPin(ONBOARD_LED2_GPIO_PORT, ONBOARD_LED2_GPIO_PIN);
+}
 
 int main(void)
 {
@@ -145,7 +165,24 @@ int main(void)
     writing_utensil_servo.pwm_driver.timer_aX_period = 400;
     servo_driver_open(&writing_utensil_servo);
 
-    // Limit Switch Controllers
+    // Physical Switches
+    physical_switch_driver_t linkage_1_home_limit_switch_driver;
+    linkage_1_home_limit_switch_driver.gpio_port =
+            LIMIT_SWITCH_LINKAGE_1_HOME_GPIO_PORT;
+    linkage_1_home_limit_switch_driver.gpio_pin =
+            LIMIT_SWITCH_LINKAGE_1_HOME_GPIO_PIN;
+    linkage_1_home_limit_switch_driver.switch_pressed_event = &limit_switch1_event;
+    linkage_1_home_limit_switch_driver.switch_released_event = &limit_switch1_event;
+    physical_switch_driver_open(&linkage_1_home_limit_switch_driver);
+
+    physical_switch_driver_t pushbutton_s2_switch_driver;
+    pushbutton_s2_switch_driver.gpio_port =
+            PUSHBUTTON_S2_GPIO_PORT;
+    pushbutton_s2_switch_driver.gpio_pin =
+            PUSHBUTTON_S2_GPIO_PIN;
+    pushbutton_s2_switch_driver.switch_pressed_event = &pushbutton_s2_event;
+    pushbutton_s2_switch_driver.switch_released_event = SWITCH_EVENT_DO_NOTHING;
+    physical_switch_driver_open(&pushbutton_s2_switch_driver);
 
 
     // See comment in declaration. Used in all examples.
@@ -155,9 +192,9 @@ int main(void)
     __enable_interrupt();
 
     GPIO_setOutputHighOnPin(ONBOARD_LED1_GPIO_PORT, ONBOARD_LED1_GPIO_PIN);
+    init_receiver();
 
-    // DEBUG: test servo movement
-    servo_driver_move_to(&writing_utensil_servo, 0);
+    //while (1) receiver_main();
 
 //    uint16_t i = 0;
 //    for(i = 1; i < 10; i++) {
@@ -179,32 +216,4 @@ int main(void)
         encoder_driver_update(motor_controller_1.encoder_driver);
 
     }
-}
-
-#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
-#pragma vector=PORT1_VECTOR
-__interrupt
-#elif defined(__GNUC__)
-__attribute__((interrupt(PORT1_VECTOR)))
-#endif
-void P1_ISR (void)
-{
-    //S1 IFG cleared
-    GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN_ALL16);
-
-    encoder_driver_signal_a_rising_edge_event(motor_controller_1.encoder_driver);
-}
-
-#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
-#pragma vector=PORT2_VECTOR
-__interrupt
-#elif defined(__GNUC__)
-__attribute__((interrupt(PORT2_VECTOR)))
-#endif
-void P2_ISR (void)
-{
-    //S2 IFG cleared
-    GPIO_clearInterrupt(GPIO_PORT_P2, GPIO_PIN_ALL16);
-
-    encoder_driver_signal_a_rising_edge_event(motor_controller_2.encoder_driver);
 }

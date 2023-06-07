@@ -10,7 +10,7 @@
 
 #include "encoder_driver.h"
 #include "motor_direct_driver.h"
-#include "pid_controller.h"
+#include "pid/pid_controller.h"
 
 typedef struct {
     pid_controller_t* pid_controller;
