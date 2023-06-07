@@ -85,11 +85,11 @@ void pwm_driver_set_duty_cycle(pwm_driver_t* driver, uint16_t duty_cycle_0_to_1_
 
     // NOTE: user's guide states pwm should be zeroed before writing new value.
     //       driverlib implementation does not zero.
-    Timer_A_setCompareValue(
-            driver->timer_aX_base_address,
-            driver->timer_aX_channel_compare_register,
-            0
-            );
+//    Timer_A_setCompareValue(
+//            driver->timer_aX_base_address,
+//            driver->timer_aX_channel_compare_register,
+//            0
+//            );
 
     Timer_A_setCompareValue(
             driver->timer_aX_base_address,

@@ -17,7 +17,7 @@ typedef struct {
   float output_limit_min;
   float output_limit_max;
 
-  float sample_time_seconds;
+  float sample_time_ms;
 
   // Controller "memory"
   float integrator;

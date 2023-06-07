@@ -120,7 +120,8 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="hardware_abstraction_layer/pid_controller/Testing|hardware_abstraction_layer/pid_controller/build|hardware_abstraction_layer/pid_controller/pid_controller_test.cc|3rd-party-lib/Ring-Buffer/examples/simple.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="hardware_abstraction_layer/pid_controller/build|hardware_abstraction_layer/pid_controller/pid_controller_test.cc|3rd-party-lib/Ring-Buffer/examples/simple.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="hardware_abstraction_layer/pid_controller/build/CMakeFiles/CMakeScratch"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

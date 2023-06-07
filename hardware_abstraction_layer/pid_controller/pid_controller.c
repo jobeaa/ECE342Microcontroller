@@ -13,11 +13,12 @@ float pid_controller_update(pid_controller_t *pid, float setpoint,
                             float measurement) {
   float error = setpoint - measurement;
 
+
   pid->proportion = pid->proportion_gain * error;
 
   // https://en.wikipedia.org/wiki/Riemann_sum#Midpoint_rule
   pid->integrator =
-      pid->integrator + pid->integration_gain * pid->sample_time_seconds *
+      pid->integrator + pid->integration_gain * pid->sample_time_ms *
                             (pid->previous_error + error) * (0.5f);
   // Anti-wind-up via integrator clamping
   if (pid->integrator > pid->integral_limit_max) {
@@ -27,10 +28,22 @@ float pid_controller_update(pid_controller_t *pid, float setpoint,
   }
   pid->previous_error = error;
 
-//  pid->differentiator =
-//      pid->derivative_gain *
-//      ((measurement - pid->previous_measurement) / (pid->sample_time_seconds));
-//  pid->previous_measurement = measurement;
+  // differentiator for PID controller should differentiate the error, but
+  // can differentiate measurement instead (assuming constant set point) as
+  // long as result is multiplied by -1.
+  if (pid->sample_time_ms != 0) {
+//        pid->differentiator =
+//                pid->derivative_gain * -1 *
+//                ((measurement - pid->previous_measurement) / (pid->sample_time_ms));
+//      pid->previous_measurement = measurement;
+
+      const float low_pass_time_constant = 8.0f;
+      pid->differentiator = -(2.0f * pid->derivative_gain * (measurement - pid->previous_measurement) +
+              (2.0f * low_pass_time_constant - pid->sample_time_ms) * pid->differentiator) /
+              (2.0f * low_pass_time_constant + pid->sample_time_ms);
+      pid->previous_measurement = measurement;
+  }
+
 
   float output = pid->proportion + pid->integrator + pid->differentiator;
   if (output > pid->output_limit_max) {
